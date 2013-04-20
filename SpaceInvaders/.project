@@ -14,11 +14,4 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>src/sprites/alien_shot.gif</name>
-			<type>1</type>
-			<location>C:/Users/Chirayu/Desktop/alien_shot (12 x 23).gif</location>
-		</link>
-	</linkedResources>
 </projectDescription>

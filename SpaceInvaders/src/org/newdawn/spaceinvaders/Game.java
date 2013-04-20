@@ -335,6 +335,7 @@ public class Game extends Canvas {
 				g.drawString(message,(800-g.getFontMetrics().stringWidth(message))/2,250);
 				g.drawString("Press any key",(800-g.getFontMetrics().stringWidth("Press any key"))/2,300);
 				score_player1.setText("0");
+				scoreplayer1 = 0;
 			}
 			
 			// finally, we've completed drawing so clear up the graphics
