@@ -23,7 +23,7 @@ public class AlienEntity extends Entity {
 		super(ref,x,y);
 		
 		this.game = game;
-		dx = -moveSpeed;
+		dx = moveSpeed;
 	}
 
 	/**
