@@ -14,6 +14,7 @@ public class BossEntity extends AlienEntity {
 		/** The speed at which the alient moves horizontally */
 	private double moveSpeed = 75;
 
+	private int bulletSpeed;
 	/** The game in which the entity exists */	
 	/**
 	 * Create the boss entity- an alien that can shoot!
@@ -23,15 +24,16 @@ public class BossEntity extends AlienEntity {
 	 * @param x The intial x location of this alien
 	 * @param y The intial y location of this alient
 	 */
-	public BossEntity(Game game,String ref,int x,int y) {
+	public BossEntity(Game game,String ref,int x,int y,int bspeed) {
            super(game,ref,x,y);
                // shot = new BigshotEntity(game,"sprites/shot.gif",x+10,y+30);
 	 this.game = game;
+	 this.bulletSpeed = bspeed;
         }
         public void bossFire(){	
 		// if we waited long enough, create the shot entity, and record the time.
 		lastBossFire = System.currentTimeMillis();
-		BigshotEntity shot = new BigshotEntity(game,"sprites/shot.gif",getX()+10,getY()+30);
+		BigshotEntity shot = new BigshotEntity(game,"sprites/alien_shot.gif",getX()+10,getY()+30,bulletSpeed);
 		game.entities.add(shot);
 	}
 

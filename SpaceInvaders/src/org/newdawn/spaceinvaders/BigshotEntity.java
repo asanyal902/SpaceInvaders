@@ -31,10 +31,18 @@ public class BigshotEntity extends Entity {
 	 * @param x The initial x location of the shot
 	 * @param y The initial y location of the shot
 	 */
-	public BigshotEntity(Game game,String sprite,int x,int y) {
+	public BigshotEntity(Game game,String sprite,int x,int y,int bspeed) {
 		super(sprite,x,y);
 		
 		this.game = game;
+		if(bspeed == 1)
+			moveSpeed = 150;
+		else if(bspeed == 2)
+			moveSpeed = 200;
+		else if(bspeed == 3)
+			moveSpeed = 250;
+		else
+			moveSpeed = 300;
 		
 		dy = moveSpeed;
 	}
