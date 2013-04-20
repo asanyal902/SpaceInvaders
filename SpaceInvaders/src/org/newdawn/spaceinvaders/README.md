@@ -1,4 +1,4 @@
 SpaceInvaders
 =============
 
-Project for OOPS course. Yay!
+Project for OOPS course.
