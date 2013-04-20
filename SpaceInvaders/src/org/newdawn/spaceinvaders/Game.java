@@ -115,7 +115,7 @@ public class Game extends Canvas {
 		
 		// initialise the entities in our game so there's something
 		// to see at startup
-		initEntities();
+		initEntities0();
 	}
 	
 	/**
@@ -125,7 +125,7 @@ public class Game extends Canvas {
 	private void startGame() {
 		// clear out any existing entities and intialise a new set
 		entities.clear();
-		initEntities();
+		initEntities0();
 		
 		// blank out any keyboard settings we might currently have
 		leftPressed = false;
@@ -136,8 +136,35 @@ public class Game extends Canvas {
 	/**
 	 * Initialise the starting state of the entities (ship and aliens). Each
 	 * entitiy will be added to the overall list of entities in the game.
-	 */
-	private void initEntities() {
+	 */private void initEntities0() {
+			// create the player ship and place it roughly in the center of the screen
+			ship = new ShipEntity(this,"sprites/ship.gif",370,550);
+			entities.add(ship);
+			
+			// create a block of aliens (5 rows, by 12 aliens, spaced evenly)
+			alienCount = 0;
+			for (int row=1;row<7;row++) 
+			{
+				for (int x=0;x<row;x++) 
+				{
+					Entity alien = new AlienEntity(this,"sprites/alien.gif",370+(x*50),(200)-row*30);
+					entities.add(alien);
+					alienCount++;
+				}
+			}
+			for (int row=2;row<7;row++) 
+			{
+				for (int x=0;x<row;x++) 
+				{
+					Entity alien = new AlienEntity(this,"sprites/alien.gif",370-(x*50),(200)-row*30);
+					entities.add(alien);
+					alienCount++;
+				}
+			}
+		}
+	 
+	 //level1
+	private void initEntities1() {
 		// create the player ship and place it roughly in the center of the screen
 		ship = new ShipEntity(this,"sprites/ship.gif",370,550);
 		entities.add(ship);
