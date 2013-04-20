@@ -14,7 +14,7 @@ public class AlienEntity extends Entity {
 	/**
 	 * Create a new alien entity
 	 * 
-	 * @param  The game in which this entity is being created
+	 * @param game The game in which this entity is being created
 	 * @param ref The sprite which should be displayed for this alien
 	 * @param x The intial x location of this alien
 	 * @param y The intial y location of this alient
@@ -23,7 +23,7 @@ public class AlienEntity extends Entity {
 		super(ref,x,y);
 		
 		this.game = game;
-		dx = -moveSpeed;
+		dx = moveSpeed;
 	}
 
 	/**
