@@ -7,7 +7,7 @@ package org.newdawn.spaceinvaders;
  */
 public class AlienEntity extends Entity {
 	/** The speed at which the alient moves horizontally */
-	private double moveSpeed = 75;
+	private double moveSpeed = 7;
 	/** The game in which the entity exists */
 	private Game game;
 	
