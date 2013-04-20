@@ -1,5 +1,6 @@
 package org.newdawn.spaceinvaders;
 
+import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,7 +16,9 @@ import java.util.ArrayList;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
@@ -39,9 +42,9 @@ public class Game extends Canvas {
 	/** True if the game is currently "running", i.e. the game loop is looping */
 	private boolean gameRunning = true;
 	/** The list of all the entities that exist in our game */
-	public ArrayList entities = new ArrayList();
+	public ArrayList<Entity> entities = new ArrayList<Entity>();
 	/** The list of entities that need to be removed from the game this loop */
-	private ArrayList removeList = new ArrayList();
+	private ArrayList<Entity> removeList = new ArrayList<Entity>();
 	/** The entity representing the player */
 	private Entity ship;
 	/** The speed at which the player's ship should move (pixels/sec) */
@@ -51,9 +54,11 @@ public class Game extends Canvas {
 	/** The interval between our players shot (ms) */
 	private long firingInterval = 500;
 	/** The number of aliens left on the screen */
-	private int alienCount;
+	protected int alienCount;
 	/**Score of the game**/
-        private static int score;
+        private static int scoreplayer1;
+        /* */
+        private static int scoreplayer2;
 	/** The message to display which waiting for a key press */
 	private String message = "";
 	/** True if we're holding up game play until a key has been pressed */
@@ -67,7 +72,17 @@ public class Game extends Canvas {
 	/** True if game logic needs to be applied this loop, normally as a result of a game event */
 	private boolean logicRequiredThisLoop = false;
         /*Time between boss alien firing shots*/
-        private long fireInterval = 1000;
+    private long fireInterval = 1000;
+    /* level of game to play*/
+    private int level = 3;
+    /*label for player1 name*/
+    private JLabel player1 = new JLabel("Chirayu");
+    /*label for player2 name*/
+    private JLabel player2;
+    /*label for player1 score*/
+    private JLabel score_player1 = new JLabel("0");;
+    /*label for player2 score*/
+    private JLabel score_player2;
 	/**
 	 * Construct our game and set it running.
 	 */
@@ -75,13 +90,24 @@ public class Game extends Canvas {
 		// create a frame to contain our game
 		JFrame container = new JFrame("Space Invaders 101");
 		
+		
+		JPanel score_panel = new JPanel();
+		score_panel.setPreferredSize(new Dimension(50,600));
+		score_panel.setLayout(new BoxLayout(score_panel,BoxLayout.Y_AXIS));
+		score_panel.add(player1);
+		score_panel.add(score_player1);
+		
+		container.setLayout(new BorderLayout());
+		container.add(score_panel,BorderLayout.WEST);
 		// get hold the content of the frame and set up the resolution of the game
-		JPanel panel = (JPanel) container.getContentPane();
+		//JPanel panel = (JPanel) container.getContentPane();
+		JPanel panel = new JPanel();
 		panel.setPreferredSize(new Dimension(800,600));
 		panel.setLayout(null);
 		
+		container.add(panel,BorderLayout.CENTER);
 		// setup our canvas size and put it into the content of the frame
-		setBounds(0,0,800,600);
+		setBounds(0,0,850,600);
 		panel.add(this);
 		
 		// Tell AWT not to bother repainting our canvas since we're
@@ -115,7 +141,10 @@ public class Game extends Canvas {
 		
 		// initialise the entities in our game so there's something
 		// to see at startup
-		initEntities();
+		ship = new ShipEntity(this,"sprites/ship.gif",370,550);
+		entities.add(ship);
+		Level currentLevel = new Level(level,ship,this);
+		currentLevel.createEntities();
 	}
 	
 	/**
@@ -125,40 +154,17 @@ public class Game extends Canvas {
 	private void startGame() {
 		// clear out any existing entities and intialise a new set
 		entities.clear();
-		initEntities();
-		
+		ship = new ShipEntity(this,"sprites/ship.gif",370,550);
+		entities.add(ship);
+		/** change for level here 
+		 * value from front user interface*/
+		//initEntities1 ();
+		Level currentLevel = new Level(level,ship,this);
+		currentLevel.createEntities();
 		// blank out any keyboard settings we might currently have
 		leftPressed = false;
 		rightPressed = false;
 		firePressed = false;
-	}
-	
-	/**
-	 * Initialise the starting state of the entities (ship and aliens). Each
-	 * entitiy will be added to the overall list of entities in the game.
-	 */
-	private void initEntities() {
-		// create the player ship and place it roughly in the center of the screen
-		ship = new ShipEntity(this,"sprites/ship.gif",370,550);
-		entities.add(ship);
-		
-		// create a block of aliens (5 rows, by 12 aliens, spaced evenly)
-		alienCount = 0;
-		for (int row=0;row<5;row++) {
-			for (int x=0;x<12;x++) {
-                            Entity alien;
-                            BossEntity boss;
-                            if((x==5||x==4)&&row==4){
-                                boss = new BossEntity(this,"sprites/alien.gif",100+(x*50),(50)+row*30);
-                                entities.add(boss);
-                            }
-                            else{
-				alien = new AlienEntity(this,"sprites/alien.gif",100+(x*50),(50)+row*30);
-                                entities.add(alien);
-                            }
-			    alienCount++;
-			}
-		}
 	}
 	
 	/**
@@ -193,7 +199,7 @@ public class Game extends Canvas {
 	 * are dead.
 	 */
 	public void notifyWin() {
-		message = "Well done! You Win! Your score is "+"";
+		message = "Well done! You Win! Your score is "+ Integer.toString(scoreplayer1);
 		waitingForKeyPress = true;
 	}
 	
@@ -204,7 +210,8 @@ public class Game extends Canvas {
 		// reduce the alient count, if there are none left, the player has won!
 		alienCount--;
 		playSound();
-		score++;
+		scoreplayer1++;
+		score_player1.setText(Integer.toString(scoreplayer1));
 		if (alienCount == 0) {
 			notifyWin();
 		}
@@ -327,6 +334,7 @@ public class Game extends Canvas {
 				g.setColor(Color.white);
 				g.drawString(message,(800-g.getFontMetrics().stringWidth(message))/2,250);
 				g.drawString("Press any key",(800-g.getFontMetrics().stringWidth("Press any key"))/2,300);
+				score_player1.setText("0");
 			}
 			
 			// finally, we've completed drawing so clear up the graphics

@@ -68,5 +68,15 @@ public class ShotEntity extends Entity {
 
 			used = true;
 		}
+		if (other instanceof BigshotEntity) {
+			// remove the affected entities
+			game.removeEntity(this);
+			game.removeEntity(other);
+			
+			// notify the game that the alien has been killed
+            // game.notifyAlienKilled();
+
+			used = true;
+		}
 	}
 }
