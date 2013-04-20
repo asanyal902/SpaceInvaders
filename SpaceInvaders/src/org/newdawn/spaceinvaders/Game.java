@@ -9,8 +9,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
+import java.io.File;
 import java.util.ArrayList;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -199,6 +203,7 @@ public class Game extends Canvas {
 	public void notifyAlienKilled() {
 		// reduce the alient count, if there are none left, the player has won!
 		alienCount--;
+		playSound();
 		score++;
 		if (alienCount == 0) {
 			notifyWin();
@@ -455,6 +460,27 @@ public class Game extends Canvas {
 				System.exit(0);
 			}
 		}
+	}
+	public static synchronized void playSound() 
+	{
+		  new Thread(new Runnable() 
+		  {
+		  // The wrapper thread is unnecessary, unless it blocks on the
+		  // Clip finishing; see comments.
+		    public void run() {
+		      try {
+		    	  Clip clip = AudioSystem.getClip();
+		    	  AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("blast.wav"));
+		          //Main.class.getResourceAsStream("/path/to/sounds/" + url));
+		    	  clip.open(inputStream);
+		    	  clip.start(); 
+		      } 
+		      catch (Exception e) 
+		      {
+		        System.err.println(e.getMessage());
+		      }
+		    }
+		  }).start();
 	}
 	
 	/**
