@@ -1,14 +1,15 @@
 package org.newdawn.spaceinvaders;
-import java.applet.Applet;
+
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
-import javax.swing.JOptionPane;
+import javax.sound.sampled.Clip;
 /**
  *
  * @author Ayush
  */
 public class SinglePanel extends JPanel {
+	private Clip clip;
     String [] levels = {"Level 1","Level 2","Level 3","Level 4"};
     protected JTextField textField;
     protected String name;
@@ -42,12 +43,15 @@ public class SinglePanel extends JPanel {
         add(list,c);
         JButton play = new JButton("Click to play");
         play.addActionListener(new ActionListener()
-        {public void actionPerformed(ActionEvent evt){
+        {
+         public void actionPerformed(ActionEvent evt){
+         clip.stop();	 
          setVisible(false);
          player1_name = textField.getText();
          String player_level = levels[list.getSelectedIndex()];
          System.out.println(player1_name+" "+player_level);
-        }});
+         }
+         });
         c.weighty = 0.1;
         c.gridx = 10;
         c.gridy = 60;
@@ -85,7 +89,9 @@ public class SinglePanel extends JPanel {
 
     }
 
-
+   public void setClip(Clip clip){
+	   this.clip = clip;
+   }
 
     @Override
     public String getName(){

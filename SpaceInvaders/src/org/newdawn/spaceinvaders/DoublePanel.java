@@ -1,12 +1,13 @@
 package org.newdawn.spaceinvaders;
-import java.applet.Applet;
+
 import java.awt.*;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.event.*;
-import javax.swing.JOptionPane;
 
 public class DoublePanel extends JPanel {
-    String [] levels = {"Level 1","Level 2","Level 3","Level 4"};
+    private Clip clip;
+	String [] levels = {"Level 1","Level 2","Level 3","Level 4"};
     protected JTextField textField;
     protected JTextField textField2;
     protected String name;
@@ -51,6 +52,7 @@ public class DoublePanel extends JPanel {
         JButton play = new JButton("Click to play");
         play.addActionListener(new ActionListener()
         {public void actionPerformed(ActionEvent evt){
+        clip.stop();
          setVisible(false);
          player1_name = textField.getText();
          player2_name = textField2.getText();
@@ -94,7 +96,9 @@ public class DoublePanel extends JPanel {
 
     }
 
-
+    public void setClip(Clip clip){
+ 	   this.clip = clip;
+    }
 
     @Override
     public String getName(){

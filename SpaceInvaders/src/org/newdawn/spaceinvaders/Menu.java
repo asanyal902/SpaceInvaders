@@ -19,6 +19,7 @@ public class Menu extends JPanel
     JButton onePlayer;
     JButton twoPlayer;
     JLabel welcome;
+    private static  Clip clip;
 public Menu(){
 
 this.setLayout(new BorderLayout());
@@ -38,6 +39,7 @@ onePlayer.addActionListener(new ActionListener(){
 public void actionPerformed(ActionEvent ev){  
    removeAll();
     SinglePanel p = new SinglePanel();
+    p.setClip(clip);
     add(p);
       p.setVisible(true);
       validate();
@@ -50,6 +52,7 @@ twoPlayer.addActionListener(new ActionListener(){
 public void actionPerformed(ActionEvent ev){
     removeAll();
     DoublePanel p = new DoublePanel();
+    p.setClip(clip);
     add(p);
     p.setVisible(true);
     validate();
@@ -82,7 +85,7 @@ public static synchronized void playInit()
 	  // Clip finishing; see comments.
 	    public void run() {
 	      try {
-	    	  Clip clip = AudioSystem.getClip();
+	    	 clip = AudioSystem.getClip();
 	    	  AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("StarWars.wav"));
 	          //Main.class.getResourceAsStream("/path/to/sounds/" + url));
 	    	  clip.open(inputStream);
