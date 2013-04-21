@@ -3,11 +3,16 @@
  * and open the template in the editor.
  */
 package org.newdawn.spaceinvaders;
-import java.applet.Applet;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
-import javax.swing.JOptionPane;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.io.File;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 public class Menu extends JPanel
 {
@@ -68,8 +73,36 @@ protected ImageIcon createImageIcon(String path,
         return null;
     }
 }
-public static void main(String[] args){
 
+public static synchronized void playInit() 
+{
+	  new Thread(new Runnable() 
+	  {
+	  // The wrapper thread is unnecessary, unless it blocks on the
+	  // Clip finishing; see comments.
+	    public void run() {
+	      try {
+	    	  Clip clip = AudioSystem.getClip();
+	    	  AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("StarWars.wav"));
+	          //Main.class.getResourceAsStream("/path/to/sounds/" + url));
+	    	  clip.open(inputStream);
+	    	  clip.start();
+	    	  while (!clip.isRunning())
+	    	      Thread.sleep(10);
+	    	  while (clip.isRunning())
+	    	      Thread.sleep(10);
+	    	  clip.close();
+	      } 
+	      catch (Exception e) 
+	      {
+	        System.err.println(e.getMessage());
+	      }
+	    }
+	  }).start();
+} 
+
+public static void main(String[] args){
+playInit();
     Menu m = new Menu();
  JFrame f = new JFrame();
 //f.setLayout(new BorderLayout());
