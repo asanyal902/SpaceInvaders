@@ -74,7 +74,7 @@ public class Game extends Canvas {
         /*Time between boss alien firing shots*/
     private long fireInterval = 1000;
     /* level of game to play*/
-    private int level = 3;
+    private int level = 1;
     /*label for player1 name*/
     private JLabel player1 = new JLabel("Chirayu");
     /*label for player2 name*/
