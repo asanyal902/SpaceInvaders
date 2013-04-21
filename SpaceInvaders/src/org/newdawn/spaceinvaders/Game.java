@@ -74,7 +74,7 @@ public class Game extends Canvas {
         /*Time between boss alien firing shots*/
     private long fireInterval = 1000;
     /* level of game to play*/
-    private int level = 1;
+    private int level = 4;
     /*label for player1 name*/
     private JLabel player1 = new JLabel("Chirayu");
     /*label for player2 name*/
@@ -201,7 +201,9 @@ public class Game extends Canvas {
 	 */
 	public void notifyWin() {
 		playWin();
-		message = "Well done! You Win! Your score is "+ Integer.toString(scoreplayer1);
+		if(level==4)
+			message = "Well done! You've finished all levels and your score is "+ Integer.toString(scoreplayer1)+".	  "+"To exit press Esc OR Press any other key to restart the game";
+		message = "Well done! Your score is "+ Integer.toString(scoreplayer1)+".	  "+"To exit press Esc OR Press any other key to move to the next level";
 		waitingForKeyPress = true;
 	}
 	
@@ -459,6 +461,10 @@ public class Game extends Canvas {
 					// event we can mark it as such and start 
 					// our new game
 					waitingForKeyPress = false;
+					if(level<4)
+						level++;
+					//if(level==4)  //restart the game
+						//level = 0;
 					startGame();
 					pressCount = 0;
 				} else {
