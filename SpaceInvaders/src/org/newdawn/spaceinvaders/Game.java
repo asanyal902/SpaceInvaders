@@ -190,6 +190,7 @@ public class Game extends Canvas {
 	 * Notification that the player has died. 
 	 */
 	public void notifyDeath() {
+		playDeath();
 		message = "Oh no! They got you, try again?";
 		waitingForKeyPress = true;
 	}
@@ -199,6 +200,7 @@ public class Game extends Canvas {
 	 * are dead.
 	 */
 	public void notifyWin() {
+		playWin();
 		message = "Well done! You Win! Your score is "+ Integer.toString(scoreplayer1);
 		waitingForKeyPress = true;
 	}
@@ -492,6 +494,60 @@ public class Game extends Canvas {
 		  }).start();
 	}
 	
+	public static synchronized void playDeath()  //plays clip when player dies
+	{
+		  new Thread(new Runnable() 
+		  {
+		  // The wrapper thread is unnecessary, unless it blocks on the
+		  // Clip finishing; see comments.
+		    public void run() {
+		      try {
+		    	  Clip clip = AudioSystem.getClip();
+		    	  AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("death.wav"));
+		          //Main.class.getResourceAsStream("/path/to/sounds/" + url));
+		    	  clip.open(inputStream);
+		    	  clip.start();
+		    	  while (!clip.isRunning())
+		    	      Thread.sleep(10);
+		    	  while (clip.isRunning())
+		    	      Thread.sleep(10);
+		    	  clip.close();
+		      } 
+		      catch (Exception e) 
+		      {
+		        System.err.println(e.getMessage());
+		      }
+		    }
+		  }).start();
+	} 
+	
+	public static synchronized void playWin()  //plays clip when player dies
+	{
+		  new Thread(new Runnable() 
+		  {
+		  // The wrapper thread is unnecessary, unless it blocks on the
+		  // Clip finishing; see comments.
+		    public void run() {
+		      try {
+		    	  Clip clip = AudioSystem.getClip();
+		    	  AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("win.wav"));
+		          //Main.class.getResourceAsStream("/path/to/sounds/" + url));
+		    	  clip.open(inputStream);
+		    	  clip.start();
+		    	  while (!clip.isRunning())
+		    	      Thread.sleep(10);
+		    	  while (clip.isRunning())
+		    	      Thread.sleep(10);
+		    	  clip.close();
+		      } 
+		      catch (Exception e) 
+		      {
+		        System.err.println(e.getMessage());
+		      }
+		    }
+		  }).start();
+	} 
+		
 	/**
 	 * The entry point into the game. We'll simply create an
 	 * instance of class which will start the display and game
