@@ -88,9 +88,10 @@ public class Game extends Canvas {
 	/**
 	 * Construct our game and set it running.
 	 */
+    private static JFrame container = new JFrame("Space Invaders 101");
 	public Game() {
 		// create a frame to contain our game
-		JFrame container = new JFrame("Space Invaders 101");
+		
 		
 		
 		JPanel score_panel = new JPanel();
@@ -106,7 +107,24 @@ public class Game extends Canvas {
 		JPanel panel = new JPanel();
 		panel.setPreferredSize(new Dimension(800,600));
 		panel.setLayout(null);
-		
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+
+                createAndShowGUI();
+            }
+        });
+    	synchronized(lock){
+    	       	        try {
+							lock.wait();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+    	    
+    	}
+        container.getContentPane().removeAll();
+        validate();
+        repaint();
 		container.add(panel,BorderLayout.CENTER);
 		// setup our canvas size and put it into the content of the frame
 		setBounds(0,0,850,600);
@@ -195,6 +213,7 @@ public class Game extends Canvas {
 		playDeath();
 		message = "Oh no! They got you, try again?";
 		waitingForKeyPress = true;
+		level = 0;
 	}
 	
 	/**
@@ -203,7 +222,7 @@ public class Game extends Canvas {
 	 */
 	public void notifyWin() {
 		playWin();
-		if(level==4)
+		if(level==5)
 			message = "Well done! You've finished all levels and your score is "+ Integer.toString(scoreplayer1)+".	  "+"To exit press Esc OR Press any other key to restart the game";
 		message = "Well done! Your score is "+ Integer.toString(scoreplayer1)+".	  "+"To exit press Esc OR Press any other key to move to the next level";
 		waitingForKeyPress = true;
@@ -462,8 +481,9 @@ public class Game extends Canvas {
 					// since we've now recieved our key typed
 					// event we can mark it as such and start 
 					// our new game
+					Menu.clip.stop();
 					waitingForKeyPress = false;
-					if(level<4)
+					if(level<5)
 						level++;
 					if(level==5)  //restart the game
 						level = 0;
@@ -557,12 +577,11 @@ public class Game extends Canvas {
 	} 
 	synchronized private static void createAndShowGUI() {
         //Create and set up the window.
-	 JFrame f = new JFrame();
 	//f.setLayout(new BorderLayout());
-	 f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	f.setSize(800,800);
-	f.setVisible(true);
-	f.setContentPane(new Menu());
+	 container.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	container.setSize(800,600);
+	container.setVisible(true);
+	container.setContentPane(new Menu());
     }
 	
 	/**
@@ -574,21 +593,7 @@ public class Game extends Canvas {
 	 */
 	public static void main(String argv[]) {
 		Menu.playInit();
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
 
-                createAndShowGUI();
-            }
-        });
-    	synchronized(lock){
-    	       	        try {
-							lock.wait();
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-    	    
-    	}
 		Game g =new Game();
 
 		 //Start the main game loop, note: this method will not

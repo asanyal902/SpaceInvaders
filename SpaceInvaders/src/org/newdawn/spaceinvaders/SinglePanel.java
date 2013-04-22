@@ -51,7 +51,7 @@ public class SinglePanel extends JPanel {
          player1_name = textField.getText();
          String player_level = levels[list.getSelectedIndex()];
         Game.player1 = new JLabel(player1_name);
-        Game.level =Integer.parseInt(player_level.charAt(6)+"");
+        Game.level =Integer.parseInt(player_level.charAt(6)+"") -1;
          System.out.println(player1_name+" "+player_level);
          synchronized(Game.lock) {
         	    Game.lock.notify();
