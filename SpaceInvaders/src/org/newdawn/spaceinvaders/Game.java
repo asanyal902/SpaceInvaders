@@ -193,6 +193,7 @@ public class Game extends Canvas {
 		playDeath();
 		message = "Oh no! They got you, try again?";
 		waitingForKeyPress = true;
+		level = 0;
 	}
 	
 	/**
@@ -201,7 +202,7 @@ public class Game extends Canvas {
 	 */
 	public void notifyWin() {
 		playWin();
-		if(level==4)
+		if(level==5)
 			message = "Well done! You've finished all levels and your score is "+ Integer.toString(scoreplayer1)+".	  "+"To exit press Esc OR Press any other key to restart the game";
 		message = "Well done! Your score is "+ Integer.toString(scoreplayer1)+".	  "+"To exit press Esc OR Press any other key to move to the next level";
 		waitingForKeyPress = true;
@@ -462,7 +463,7 @@ public class Game extends Canvas {
 					// our new game
 					Menu.clip.stop();
 					waitingForKeyPress = false;
-					if(level<4)
+					if(level<5)
 						level++;
 					if(level==4)  //restart the game
 						level = 0;
