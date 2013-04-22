@@ -4,7 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -17,6 +19,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -85,6 +88,7 @@ public class Game extends Canvas {
     private JLabel score_player1 = new JLabel("0");;
     /*label for player2 score*/
     private JLabel score_player2;
+    
 	/**
 	 * Construct our game and set it running.
 	 */
@@ -287,7 +291,8 @@ public class Game extends Canvas {
 			Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
 			g.setColor(Color.black);
 			g.fillRect(0,0,800,600);
-			
+			Image bg = new ImageIcon("moon-earth.jpg").getImage();
+	    	g.drawImage(bg, 0, 0, getWidth(), getHeight(), this);
 			// cycle round asking each entity to move itself
 			if (!waitingForKeyPress) {
 				for (int i=0;i<entities.size();i++) {
@@ -557,14 +562,21 @@ public class Game extends Canvas {
 		    }
 		  }).start();
 	} 
-	synchronized private static void createAndShowGUI() {
+	synchronized private static void createAndShowGUI() 
+	{
         //Create and set up the window.
 	 JFrame f = new JFrame();
 	//f.setLayout(new BorderLayout());
 	 f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	f.setSize(800,800);
-	f.setVisible(true);
-	f.setContentPane(new Menu());
+	//f.setSize(850,600);
+	 f.setVisible(true);
+	 f.setPreferredSize(new Dimension(850,600));
+	 f.pack();
+	 f.setResizable(false);
+	// JPanel test = new Menu();
+	 //f.setContentPane(test);
+	 f.setContentPane(new Menu());
+	//test.paintComponent(test.getGraphics());
     }
 	
 	/**
@@ -592,7 +604,6 @@ public class Game extends Canvas {
     	    
     	}
 		Game g =new Game();
-
 		 //Start the main game loop, note: this method will not
 		// return until the game has finished running. Hence we are
 		// using the actual main thread to run the game.
