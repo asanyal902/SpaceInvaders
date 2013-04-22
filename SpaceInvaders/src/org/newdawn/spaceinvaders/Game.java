@@ -37,6 +37,7 @@ import javax.swing.JPanel;
  * @author Kevin Glass
  */
 public class Game extends Canvas {
+	public final static Object lock = new Object();
 	/** The stragey that allows us to use accelerate page flipping */
 	private BufferStrategy strategy;
 	/** True if the game is currently "running", i.e. the game loop is looping */
@@ -74,11 +75,12 @@ public class Game extends Canvas {
         /*Time between boss alien firing shots*/
     private long fireInterval = 1000;
     /* level of game to play*/
-    private int level = 0;
+    public static int level = 0;
+    
     /*label for player1 name*/
-    private JLabel player1 = new JLabel("Chirayu");
+    public static JLabel player1 = new JLabel("Chirayu");
     /*label for player2 name*/
-    private JLabel player2;
+    public static JLabel player2 = new JLabel("Ayush");
     /*label for player1 score*/
     private JLabel score_player1 = new JLabel("0");;
     /*label for player2 score*/
@@ -463,8 +465,8 @@ public class Game extends Canvas {
 					waitingForKeyPress = false;
 					if(level<4)
 						level++;
-					//if(level==4)  //restart the game
-						//level = 0;
+					if(level==5)  //restart the game
+						level = 0;
 					startGame();
 					pressCount = 0;
 				} else {
@@ -553,7 +555,16 @@ public class Game extends Canvas {
 		    }
 		  }).start();
 	} 
-		
+	synchronized private static void createAndShowGUI() {
+        //Create and set up the window.
+	 JFrame f = new JFrame();
+	//f.setLayout(new BorderLayout());
+	 f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	f.setSize(800,800);
+	f.setVisible(true);
+	f.setContentPane(new Menu());
+    }
+	
 	/**
 	 * The entry point into the game. We'll simply create an
 	 * instance of class which will start the display and game
@@ -563,15 +574,21 @@ public class Game extends Canvas {
 	 */
 	public static void main(String argv[]) {
 		Menu.playInit();
-	    Menu m = new Menu();
-	 JFrame f = new JFrame();
-	//f.setLayout(new BorderLayout());
-	 f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
 
-
-	f.setSize(800,800);
-	f.setVisible(true);
-	f.setContentPane(m);
+                createAndShowGUI();
+            }
+        });
+    	synchronized(lock){
+    	       	        try {
+							lock.wait();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+    	    
+    	}
 		Game g =new Game();
 
 		 //Start the main game loop, note: this method will not

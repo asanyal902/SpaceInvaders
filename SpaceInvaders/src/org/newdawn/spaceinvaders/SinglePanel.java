@@ -2,6 +2,7 @@ package org.newdawn.spaceinvaders;
 
 import java.awt.*;
 import javax.swing.*;
+
 import java.awt.event.*;
 import javax.sound.sampled.Clip;
 /**
@@ -49,7 +50,12 @@ public class SinglePanel extends JPanel {
          setVisible(false);
          player1_name = textField.getText();
          String player_level = levels[list.getSelectedIndex()];
+        Game.player1 = new JLabel(player1_name);
+        Game.level =Integer.parseInt(player_level.charAt(6)+"");
          System.out.println(player1_name+" "+player_level);
+         synchronized(Game.lock) {
+        	    Game.lock.notify();
+        	}
          }
          });
         c.weighty = 0.1;
