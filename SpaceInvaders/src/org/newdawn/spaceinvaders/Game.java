@@ -458,6 +458,7 @@ public class Game extends Canvas {
 					// since we've now recieved our key typed
 					// event we can mark it as such and start 
 					// our new game
+					Menu.clip.stop();
 					waitingForKeyPress = false;
 					startGame();
 					pressCount = 0;
@@ -556,6 +557,7 @@ public class Game extends Canvas {
 	 * @param argv The arguments that are passed into our game
 	 */
 	public static void main(String argv[]) {
+		Menu.playInit();
 		Game g =new Game();
 
 		// Start the main game loop, note: this method will not

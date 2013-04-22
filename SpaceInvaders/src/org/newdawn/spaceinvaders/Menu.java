@@ -19,7 +19,7 @@ public class Menu extends JPanel
     JButton onePlayer;
     JButton twoPlayer;
     JLabel welcome;
-    private static  Clip clip;
+    public static  Clip clip;
 public Menu(){
 
 this.setLayout(new BorderLayout());
