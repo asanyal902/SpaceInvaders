@@ -1,6 +1,7 @@
 package org.newdawn.spaceinvaders;
 
 import java.awt.*;
+
 import javax.sound.sampled.Clip;
 import javax.swing.*;
 
@@ -15,40 +16,48 @@ public class DoublePanel extends JPanel {
     private final static String newline = "\n";
     String player1_name;
     String player2_name;
+    public void paintComponent(Graphics g)
+    {
+    	Image bg = new ImageIcon("yoda_master.jpg").getImage();
+    	g.drawImage(bg, 0, 0, getWidth(), getHeight(), this);
+    }
     public DoublePanel() {
+    	
         super(new GridBagLayout());
         setBackground(Color.BLACK);
         GridBagConstraints c = new GridBagConstraints();
         JLabel welcome = new JLabel("Please Enter Your names and preferred level below");
         welcome.setForeground(Color.WHITE);
-        welcome.setFont(new Font(Font.SERIF,Font.BOLD,50));
+        welcome.setFont(new Font(Font.SERIF,Font.BOLD,30));
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 10;
         c.gridy = 0;
         add(welcome,c);
-        textField = new JTextField("Player 1 :Enter Your name here",20);
-        textField.setBackground(Color.BLACK);
-        textField.setForeground(Color.WHITE);
+        textField = new JTextField(20);
+        textField.setToolTipText("Player 1: Enter your Name here");
+        textField.setBackground(Color.WHITE);
+        textField.setForeground(Color.BLACK);
         textField.setFont(new Font(Font.SERIF,Font.BOLD,20));
         c.fill = GridBagConstraints.NONE;
        c.weighty = 0.2;
         c.gridx = 10;
-        c.gridy=20;
+        c.gridy=10;
         add(textField,c);
-        textField2 = new JTextField("Player 2 :Enter Your name here",20);
-        textField2.setBackground(Color.BLACK);
-        textField2.setForeground(Color.WHITE);
+        textField2 = new JTextField(20);
+        textField2.setToolTipText("Player 2: Enter your Name here");
+        textField2.setBackground(Color.WHITE);
+        textField2.setForeground(Color.BLACK);
         textField2.setFont(new Font(Font.SERIF,Font.BOLD,20));
         c.fill = GridBagConstraints.NONE;
        c.weighty = 0.2;
         c.gridx = 10;
-        c.gridy=30;
+        c.gridy=15;
         add(textField2,c);
         final JComboBox list = new JComboBox(levels);
         c.fill = GridBagConstraints.NONE;
        c.weighty = 0.1;
         c.gridx = 10;
-        c.gridy=40;
+        c.gridy=30;
         add(list,c);
         JButton play = new JButton("Click to play");
         play.addActionListener(new ActionListener()
@@ -57,6 +66,7 @@ public class DoublePanel extends JPanel {
          setVisible(false);
          player1_name = textField.getText();
          player2_name = textField2.getText();
+         Game.twoPlayer = true;
          String player_level = levels[list.getSelectedIndex()];
          Game.player1 = new JLabel(player1_name);
          Game.player2 = new JLabel(player2_name);
@@ -69,7 +79,7 @@ public class DoublePanel extends JPanel {
         }});
         c.weighty = 0.1;
         c.gridx = 10;
-        c.gridy = 60;
+        c.gridy = 40;
         add(play,c);
       /* super(new BorderLayout());
         setBackground(Color.BLACK);

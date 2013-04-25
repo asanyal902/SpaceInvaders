@@ -58,6 +58,7 @@ public class SinglePanel extends JPanel
         	{
         		clip.stop();	 
         		setVisible(false);
+        		 Game.twoPlayer = false;
         		player1_name = textField.getText();
         		String player_level = levels[list.getSelectedIndex()];
         		Game.player1 = new JLabel(player1_name);

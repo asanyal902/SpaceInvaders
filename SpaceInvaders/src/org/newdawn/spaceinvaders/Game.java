@@ -73,44 +73,75 @@ public class Game extends Canvas {
 	private boolean rightPressed = false;
 	/** True if we are firing */
 	private boolean firePressed = false;
+	/** True if the 'A' key is currently pressed */
+	private boolean AkeyPressed = false;
+	/** True if the 'D' cursor key is currently pressed */
+	private boolean DkeyPressed = false;
+	/** True if we are firing using 'W' key */
+	private boolean fireWPressed = false;
+	
 	/** True if game logic needs to be applied this loop, normally as a result of a game event */
 	private boolean logicRequiredThisLoop = false;
         /*Time between boss alien firing shots*/
     private long fireInterval = 1000;
     /* level of game to play*/
-    public static int level = 0;
+    public static int level;
     
     /*label for player1 name*/
     public static JLabel player1 = new JLabel("Chirayu");
     /*label for player2 name*/
     public static JLabel player2 = new JLabel("Ayush");
     /*label for player1 score*/
-    private JLabel score_player1 = new JLabel("0");;
+    private JLabel score_player1 = new JLabel("0");
     /*label for player2 score*/
-    private JLabel score_player2;
-    
+    private JLabel score_player2= new JLabel("0");
+	/*Flag to indicate whether the user selected 1player or 2 player*/
+    public static boolean twoPlayer=true;
+    /*The other ship, initiailized if 2 player game*/
+	private ShipEntity shipOther=null;
+	/*The time at which last fired a shot */
+	private long lastFire2=0;  
+	/*number pf players left*/
+	private int players=1;
 	/**
 	 * Construct our game and set it running.
 	 */
+    private static JFrame container = new JFrame("Space Invaders 101");
 	public Game() {
-		// create a frame to contain our game
-		JFrame container = new JFrame("Space Invaders 101");
-		
-		
+		JPanel panel = new JPanel();
+		panel.setPreferredSize(new Dimension(800,600));
+		panel.setLayout(null);
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+
+                createAndShowGUI();
+            }
+        });
+    	synchronized(lock){
+    	       	        try {
+							lock.wait();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+    	    
+    	}
+    	if(twoPlayer)
+    		players = 2;
+        container.getContentPane().removeAll();
+        validate();
+        repaint();
 		JPanel score_panel = new JPanel();
 		score_panel.setPreferredSize(new Dimension(50,600));
 		score_panel.setLayout(new BoxLayout(score_panel,BoxLayout.Y_AXIS));
 		score_panel.add(player1);
 		score_panel.add(score_player1);
-		
+		if(twoPlayer){
+			score_panel.add(player2);
+			score_panel.add(score_player2);
+		}
 		container.setLayout(new BorderLayout());
 		container.add(score_panel,BorderLayout.WEST);
-		// get hold the content of the frame and set up the resolution of the game
-		//JPanel panel = (JPanel) container.getContentPane();
-		JPanel panel = new JPanel();
-		panel.setPreferredSize(new Dimension(800,600));
-		panel.setLayout(null);
-		
 		container.add(panel,BorderLayout.CENTER);
 		// setup our canvas size and put it into the content of the frame
 		setBounds(0,0,850,600);
@@ -131,7 +162,7 @@ public class Game extends Canvas {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
-		});
+		}); 
 		
 		// add a key input system (defined below) to our canvas
 		// so we can respond to key pressed
@@ -148,8 +179,17 @@ public class Game extends Canvas {
 		// initialise the entities in our game so there's something
 		// to see at startup
 		ship = new ShipEntity(this,"sprites/ship.gif",370,550);
+		if(twoPlayer)
+		{
+			shipOther = new ShipEntity(this,"sprites/ship.gif",400,550);
+			entities.add(shipOther);
+		}
 		entities.add(ship);
-		Level currentLevel = new Level(level,ship,this);
+		Level currentLevel;
+		if(twoPlayer)
+			currentLevel = new Level(level,ship,shipOther,this); 
+		else
+			currentLevel = new Level(level,ship,this);
 		currentLevel.createEntities();
 	}
 	
@@ -162,6 +202,11 @@ public class Game extends Canvas {
 		entities.clear();
 		ship = new ShipEntity(this,"sprites/ship.gif",370,550);
 		entities.add(ship);
+		if(twoPlayer)
+		{
+			shipOther = new ShipEntity(this,"sprites/ship.gif",400,550);
+			entities.add(shipOther);
+		}
 		/** change for level here 
 		 * value from front user interface*/
 		//initEntities1 ();
@@ -171,6 +216,9 @@ public class Game extends Canvas {
 		leftPressed = false;
 		rightPressed = false;
 		firePressed = false;
+		AkeyPressed = false;
+		DkeyPressed = false;
+		fireWPressed = false;
 	}
 	
 	/**
@@ -196,10 +244,18 @@ public class Game extends Canvas {
 	 * Notification that the player has died. 
 	 */
 	public void notifyDeath() {
+		/*Checking if any players left, if both dead do following*/
+		if(players==1){ 
 		playDeath();
 		message = "Oh no! They got you, try again?";
 		waitingForKeyPress = true;
 		level = 0;
+		}
+		/*else do the following*/
+		else{
+			players--;
+			playSound();	
+		}
 	}
 	
 	/**
@@ -217,12 +273,21 @@ public class Game extends Canvas {
 	/**
 	 * Notification that an alien has been killed
 	 */
-	public void notifyAlienKilled() {
+	public void notifyAlienKilled(int player) {
 		// reduce the alient count, if there are none left, the player has won!
 		alienCount--;
 		playSound();
+		if(player==1)
+		{
 		scoreplayer1++;
 		score_player1.setText(Integer.toString(scoreplayer1));
+		}
+		else
+		{
+		scoreplayer2++;
+		score_player2.setText(Integer.toString(scoreplayer2));
+		}
+		
 		if (alienCount == 0) {
 			notifyWin();
 		}
@@ -252,17 +317,20 @@ public class Game extends Canvas {
 		
 		// if we waited long enough, create the shot entity, and record the time.
 		lastFire = System.currentTimeMillis();
-		ShotEntity shot = new ShotEntity(this,"sprites/shot.gif",ship.getX()+10,ship.getY()-30);
+		ShotEntity shot = new ShotEntity(this,"sprites/shot.gif",ship.getX()+10,ship.getY()-30,1);
 		entities.add(shot);
         }
-	
-        /*
-        	public void bossFire() {	
+	public void tryToFire2(){
+		// check that we have waiting long enough to fire for ship 2
+		if (System.currentTimeMillis() - lastFire2 < firingInterval) {
+			return;
+		}
+		
 		// if we waited long enough, create the shot entity, and record the time.
-		lastBossFire = System.currentTimeMillis();
-		BigshotEntity shot = new BigshotEntity(this,"sprites/shot.gif",boss.getX()+10,boss.getY()+30);
+		lastFire2 = System.currentTimeMillis();
+		ShotEntity shot = new ShotEntity(this,"sprites/shot.gif",shipOther.getX()+10,shipOther.getY()-30,2);
 		entities.add(shot);
-	}*/
+        } 
 	
 	/**
 	 * The main game loop. This loop is running during all game
@@ -348,6 +416,8 @@ public class Game extends Canvas {
 				g.drawString("Press any key",(800-g.getFontMetrics().stringWidth("Press any key"))/2,300);
 				score_player1.setText("0");
 				scoreplayer1 = 0;
+				score_player2.setText("0");
+				scoreplayer2 = 0;
 			}
 			
 			// finally, we've completed drawing so clear up the graphics
@@ -366,14 +436,30 @@ public class Game extends Canvas {
 				ship.setHorizontalMovement(moveSpeed);
 			}
 			
+			//update keys for ship2, if 2 player enabled
+		if(twoPlayer)
+		{
+			shipOther.setHorizontalMovement(0);
+			if ((AkeyPressed) && (!DkeyPressed)) {
+				shipOther.setHorizontalMovement(-moveSpeed);
+			} else if ((DkeyPressed) && (!AkeyPressed)) {
+				shipOther.setHorizontalMovement(moveSpeed);
+			}
+		}
 			// if we're pressing fire, attempt to fire
 			if (firePressed) {
 				tryToFire();
 			}
-                        //alien should shoot if time exceeded
-                       	for (int i=0;i<entities.size();i++) {
-			if(entities.get(i) instanceof BossEntity){
-                            BossEntity boss = (BossEntity)entities.get(i);
+			// if we're pressing fire for ship2, attempt to fire
+			if (fireWPressed) {
+				tryToFire2();
+			}
+			
+                        
+			//alien should shoot if time exceeded
+			for (int i=0;i<entities.size();i++) {
+            	if(entities.get(i) instanceof BossEntity){
+                        BossEntity boss = (BossEntity)entities.get(i);
                         if(System.currentTimeMillis()- boss.lastBossFire > fireInterval && !waitingForKeyPress)
                             boss.bossFire();
                         
@@ -426,6 +512,16 @@ public class Game extends Canvas {
 			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 				firePressed = true;
 			}
+			
+			if (e.getKeyCode() == KeyEvent.VK_A) {
+				AkeyPressed = true;
+			}
+			if (e.getKeyCode() == KeyEvent.VK_D) {
+				DkeyPressed = true;
+			}
+			if (e.getKeyCode() == KeyEvent.VK_W) {
+				fireWPressed = true;
+			}
 		} 
 		
 		/**
@@ -448,6 +544,16 @@ public class Game extends Canvas {
 			}
 			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 				firePressed = false;
+			}
+			
+			if (e.getKeyCode() == KeyEvent.VK_A) {
+				AkeyPressed = false;
+			}
+			if (e.getKeyCode() == KeyEvent.VK_D) {
+				DkeyPressed = false;
+			}
+			if (e.getKeyCode() == KeyEvent.VK_W) {
+				fireWPressed = false;
 			}
 		}
 
@@ -562,21 +668,17 @@ public class Game extends Canvas {
 		    }
 		  }).start();
 	} 
-	synchronized private static void createAndShowGUI() 
-	{
+	synchronized private static void createAndShowGUI() {
         //Create and set up the window.
-	 JFrame f = new JFrame();
 	//f.setLayout(new BorderLayout());
-	 f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	//f.setSize(850,600);
-	 f.setVisible(true);
-	 f.setPreferredSize(new Dimension(850,600));
-	 f.pack();
-	 f.setResizable(false);
-	// JPanel test = new Menu();
-	 //f.setContentPane(test);
-	 f.setContentPane(new Menu());
-	//test.paintComponent(test.getGraphics());
+	 container.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	//container.setSize(850,600);
+	container.setVisible(true);
+	container.setVisible(true);
+	container.setPreferredSize(new Dimension(850,600));
+	container.pack();
+	container.setResizable(false);
+    container.setContentPane(new Menu());
     }
 	
 	/**
@@ -588,22 +690,9 @@ public class Game extends Canvas {
 	 */
 	public static void main(String argv[]) {
 		Menu.playInit();
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
 
-                createAndShowGUI();
-            }
-        });
-    	synchronized(lock){
-    	       	        try {
-							lock.wait();
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-    	    
-    	}
 		Game g =new Game();
+
 		 //Start the main game loop, note: this method will not
 		// return until the game has finished running. Hence we are
 		// using the actual main thread to run the game.
