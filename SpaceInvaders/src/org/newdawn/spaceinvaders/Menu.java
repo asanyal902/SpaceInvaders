@@ -13,11 +13,27 @@ import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+/**
+* Displays menu. With one player, two player option
+* @author Ayush Sanyal, Chirayu Garg
+*/
 
 public class Menu extends JPanel
 {
+    /**
+	 * @uml.property  name="onePlayer"
+	 * @uml.associationEnd  multiplicity="(1 1)"
+	 */
     JButton onePlayer;
+    /**
+	 * @uml.property  name="twoPlayer"
+	 * @uml.associationEnd  multiplicity="(1 1)"
+	 */
     JButton twoPlayer;
+    /**
+	 * @uml.property  name="welcome"
+	 * @uml.associationEnd  multiplicity="(1 1)"
+	 */
     JLabel welcome;
     public static  Clip clip;
     @Override 
@@ -28,20 +44,15 @@ public class Menu extends JPanel
     }
     public Menu()
     {
-    	//this.setPreferredSize(new Dimension(850,600));
     	this.setLayout(new BorderLayout());
     	this.setBackground(Color.BLACK);
     	
     	onePlayer = new JButton("Single Player");
     	twoPlayer = new JButton("Two Player");
-    //	ImageIcon icon = createImageIcon("jetsons.gif","Image in Top Label");
-    //	ImageIcon jet = new ImageIcon("");
-    //	welcome = new JLabel("Welcome to Space Invaders!",jet,JLabel.CENTER);
     	welcome = new JLabel("Welcome to Space Invaders!",JLabel.CENTER);
     	welcome.setForeground(Color.WHITE);
     	welcome.setFont(new Font(Font.SERIF,Font.BOLD,50));
     	JPanel buttons = new JPanel();
-    	//buttons.setLayout(new BorderLayout());
     	this.add(BorderLayout.NORTH,welcome);
     	this.add(BorderLayout.SOUTH,buttons);
     	onePlayer.addActionListener(new ActionListener()
@@ -55,8 +66,6 @@ public class Menu extends JPanel
     			p.setVisible(true);
     			validate();
     			repaint();
-    			//   name1 = p.getName();
-    			//  System.out.println(name1);
     		}
     	});
     	twoPlayer.addActionListener(new ActionListener(){
@@ -75,24 +84,10 @@ public class Menu extends JPanel
     	buttons.add(onePlayer);
     	buttons.add(twoPlayer);
     	JLabel name2 = new JLabel("Please Enter your name");
-    	//this.add(BorderLayout.CENTER,name2);
     }
 
-    protected ImageIcon createImageIcon(String path,String description) 
-    {
-    	java.net.URL imgURL = getClass().getResource(path);
-    	if (imgURL != null) 
-    	{
-    		return new ImageIcon(imgURL, description);
-    	} 
-    	else
-    	{
-    		System.err.println("Couldn't find file: " + path);
-    		return null;
-    	}
-    }
 
-    public static synchronized void playInit() 
+    public synchronized void playInit() 
     {
     	new Thread(new Runnable() 
     	{
@@ -103,7 +98,6 @@ public class Menu extends JPanel
     			{
     				clip = AudioSystem.getClip();
     				AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("StarWars.wav"));
-    				//Main.class.getResourceAsStream("/path/to/sounds/" + url));
     				clip.open(inputStream);
     				clip.start();
     				while (!clip.isRunning())
@@ -120,19 +114,6 @@ public class Menu extends JPanel
 	  }).start();
     } 
     
-   
-    public static void main(String[] args)
-    {
-    	playInit();
-    	Menu m = new Menu();
-    	JFrame f = new JFrame();
-    	//f.setLayout(new BorderLayout());
-    	f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	f.setSize(800,800);
-    	f.setVisible(true);
-    	f.setContentPane(m);
-    //	m.paintComponent(getGraphics());
-    }
 }
 
 

@@ -6,15 +6,42 @@ import javax.sound.sampled.Clip;
 import javax.swing.*;
 
 import java.awt.event.*;
-
+/**
+* Makes Panel for 2 player interface. Taking Player Names
+* @author Ayush Sanyal, Chirayu Garg
+*/
 public class DoublePanel extends JPanel {
+    /**
+	 * @uml.property  name="clip"
+	 * @uml.associationEnd  
+	 */
     private Clip clip;
+	/**
+	 * @uml.property  name="levels" multiplicity="(0 -1)" dimension="1"
+	 */
 	String [] levels = {"Level 1","Level 2","Level 3","Level 4"};
+    /**
+	 * @uml.property  name="textField"
+	 * @uml.associationEnd  multiplicity="(1 1)"
+	 */
     protected JTextField textField;
+    /**
+	 * @uml.property  name="textField2"
+	 * @uml.associationEnd  multiplicity="(1 1)"
+	 */
     protected JTextField textField2;
+    /**
+	 * @uml.property  name="name"
+	 */
     protected String name;
     private final static String newline = "\n";
+    /**
+	 * @uml.property  name="player1_name"
+	 */
     String player1_name;
+    /**
+	 * @uml.property  name="player2_name"
+	 */
     String player2_name;
     public void paintComponent(Graphics g)
     {
@@ -81,43 +108,22 @@ public class DoublePanel extends JPanel {
         c.gridx = 10;
         c.gridy = 40;
         add(play,c);
-      /* super(new BorderLayout());
-        setBackground(Color.BLACK);
-
-        textField = new JTextField(5);
-      // textField.setSize(10,2);
-      // textField.setBackground(Color.BLACK);
-    //   textField.setForeground(Color.WHITE);
-      /* textField.addActionListener( new ActionListener()
-        {public void actionPerformed(ActionEvent evt){
-        name = textField.getText();
-        }});*/
-  /*      JLabel welcome = new JLabel("Please Enter Your name below");
-        welcome.setForeground(Color.WHITE);
-        welcome.setFont(new Font(Font.SERIF,Font.BOLD,50));
-        JButton play = new JButton("Click to play");
-        play.addActionListener(new ActionListener()
-        {public void actionPerformed(ActionEvent evt){
-         setVisible(false);
-         player1_name = textField.getText();
-
-         System.out.println(player1_name);
-        }});*/
-       //name.s
-       /* add(BorderLayout.NORTH,welcome);
-        add(BorderLayout.CENTER,textField);
-        add(BorderLayout.SOUTH,play);*/
-  /*      add(welcome,BorderLayout.NORTH);
-        add(textField,BorderLayout.NORTH);
-        add(play,BorderLayout.SOUTH);*/
-
+      
 
     }
 
+    /**
+	 * @param clip
+	 * @uml.property  name="clip"
+	 */
     public void setClip(Clip clip){
  	   this.clip = clip;
     }
 
+    /**
+	 * @return
+	 * @uml.property  name="name"
+	 */
     @Override
     public String getName(){
     return this.name;
@@ -128,27 +134,6 @@ public class DoublePanel extends JPanel {
      * this method should be invoked from the
      * event dispatch thread.
      */
-    private static void createAndShowGUI() {
-        //Create and set up the window.
-        JFrame frame = new JFrame("TextDemo");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-frame.setBackground(Color.BLACK);
-        //Add contents to the window.
-        frame.setContentPane(new SinglePanel());
-
-        //Display the window.
-        frame.setSize(200, 200);
-        //frame.pack();
-        frame.setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        //Schedule a job for the event dispatch thread:
-        //creating and showing this application's GUI.
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                createAndShowGUI();
-            }
-        });
-    }
+   
+   
 }

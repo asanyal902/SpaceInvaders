@@ -38,51 +38,112 @@ import javax.swing.JPanel;
  * appropriate game actions.
  * 
  * @author Kevin Glass
+ * -- Edited BY: Chirayu Garg, Ayush Sanyal
  */
 public class Game extends Canvas {
 	public final static Object lock = new Object();
-	/** The stragey that allows us to use accelerate page flipping */
+	/**
+	 * The stragey that allows us to use accelerate page flipping
+	 * @uml.property  name="strategy"
+	 */
 	private BufferStrategy strategy;
-	/** True if the game is currently "running", i.e. the game loop is looping */
+	/**
+	 * True if the game is currently "running", i.e. the game loop is looping
+	 * @uml.property  name="gameRunning"
+	 */
 	private boolean gameRunning = true;
-	/** The list of all the entities that exist in our game */
+	/**
+	 * The list of all the entities that exist in our game
+	 * @uml.property  name="entities"
+	 * @uml.associationEnd  multiplicity="(0 -1)" elementType="org.newdawn.spaceinvaders.Entity"
+	 */
 	public ArrayList<Entity> entities = new ArrayList<Entity>();
-	/** The list of entities that need to be removed from the game this loop */
+	/**
+	 * The list of entities that need to be removed from the game this loop
+	 * @uml.property  name="removeList"
+	 * @uml.associationEnd  multiplicity="(0 -1)" elementType="org.newdawn.spaceinvaders.Entity"
+	 */
 	private ArrayList<Entity> removeList = new ArrayList<Entity>();
-	/** The entity representing the player */
+	/**
+	 * The entity representing the player
+	 * @uml.property  name="ship"
+	 * @uml.associationEnd  multiplicity="(1 1)"
+	 */
 	private Entity ship;
-	/** The speed at which the player's ship should move (pixels/sec) */
+	/**
+	 * The speed at which the player's ship should move (pixels/sec)
+	 * @uml.property  name="moveSpeed"
+	 */
 	private double moveSpeed = 300;
-	/** The time at which last fired a shot */
+	/**
+	 * The time at which last fired a shot
+	 * @uml.property  name="lastFire"
+	 */
 	private long lastFire = 0;
-	/** The interval between our players shot (ms) */
+	/**
+	 * The interval between our players shot (ms)
+	 * @uml.property  name="firingInterval"
+	 */
 	private long firingInterval = 500;
-	/** The number of aliens left on the screen */
+	/**
+	 * The number of aliens left on the screen
+	 * @uml.property  name="alienCount"
+	 */
 	protected int alienCount;
 	/**Score of the game**/
         private static int scoreplayer1;
         /* */
         private static int scoreplayer2;
-	/** The message to display which waiting for a key press */
+	/**
+	 * The message to display which waiting for a key press
+	 * @uml.property  name="message"
+	 */
 	private String message = "";
-	/** True if we're holding up game play until a key has been pressed */
+	/**
+	 * True if we're holding up game play until a key has been pressed
+	 * @uml.property  name="waitingForKeyPress"
+	 */
 	private boolean waitingForKeyPress = true;
-	/** True if the left cursor key is currently pressed */
+	/**
+	 * True if the left cursor key is currently pressed
+	 * @uml.property  name="leftPressed"
+	 */
 	private boolean leftPressed = false;
-	/** True if the right cursor key is currently pressed */
+	/**
+	 * True if the right cursor key is currently pressed
+	 * @uml.property  name="rightPressed"
+	 */
 	private boolean rightPressed = false;
-	/** True if we are firing */
+	/**
+	 * True if we are firing
+	 * @uml.property  name="firePressed"
+	 */
 	private boolean firePressed = false;
-	/** True if the 'A' key is currently pressed */
+	/**
+	 * True if the 'A' key is currently pressed
+	 * @uml.property  name="akeyPressed"
+	 */
 	private boolean AkeyPressed = false;
-	/** True if the 'D' cursor key is currently pressed */
+	/**
+	 * True if the 'D' cursor key is currently pressed
+	 * @uml.property  name="dkeyPressed"
+	 */
 	private boolean DkeyPressed = false;
-	/** True if we are firing using 'W' key */
+	/**
+	 * True if we are firing using 'W' key
+	 * @uml.property  name="fireWPressed"
+	 */
 	private boolean fireWPressed = false;
 	
-	/** True if game logic needs to be applied this loop, normally as a result of a game event */
+	/**
+	 * True if game logic needs to be applied this loop, normally as a result of a game event
+	 * @uml.property  name="logicRequiredThisLoop"
+	 */
 	private boolean logicRequiredThisLoop = false;
         /*Time between boss alien firing shots*/
+    /**
+	 * @uml.property  name="fireInterval"
+	 */
     private long fireInterval = 1000;
     /* level of game to play*/
     public static int level;
@@ -92,32 +153,54 @@ public class Game extends Canvas {
     /*label for player2 name*/
     public static JLabel player2 = new JLabel("Ayush");
     /*label for player1 score*/
+    /**
+	 * @uml.property  name="score_player1"
+	 * @uml.associationEnd  multiplicity="(1 1)"
+	 */
     private JLabel score_player1 = new JLabel("0");
     /*label for player2 score*/
+    /**
+	 * @uml.property  name="score_player2"
+	 * @uml.associationEnd  multiplicity="(1 1)"
+	 */
     private JLabel score_player2= new JLabel("0");
 	/*Flag to indicate whether the user selected 1player or 2 player*/
     public static boolean twoPlayer=true;
     /*The other ship, initiailized if 2 player game*/
+	/**
+	 * @uml.property  name="shipOther"
+	 * @uml.associationEnd  multiplicity="(1 1)" inverse="game:org.newdawn.spaceinvaders.ShipEntity"
+	 */
 	private ShipEntity shipOther=null;
 	/*The time at which last fired a shot */
+	/**
+	 * @uml.property  name="lastFire2"
+	 */
 	private long lastFire2=0;  
 	/*number pf players left*/
+	/**
+	 * @uml.property  name="players"
+	 */
 	private int players=1;
 	/**
 	 * Construct our game and set it running.
 	 */
     private static JFrame container = new JFrame("Space Invaders 101");
-	public Game() {
+	public Game() 
+	{
 		JPanel panel = new JPanel();
 		panel.setPreferredSize(new Dimension(800,600));
 		panel.setLayout(null);
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
+		javax.swing.SwingUtilities.invokeLater(new Runnable() 
+		{
+            public void run() 
+            {
 
                 createAndShowGUI();
             }
         });
-    	synchronized(lock){
+    	synchronized(lock)
+    	{
     	       	        try {
 							lock.wait();
 						} catch (InterruptedException e) {
@@ -413,7 +496,7 @@ public class Game extends Canvas {
 			if (waitingForKeyPress) {
 				g.setColor(Color.white);
 				g.drawString(message,(800-g.getFontMetrics().stringWidth(message))/2,250);
-				g.drawString("Press any key",(800-g.getFontMetrics().stringWidth("Press any key"))/2,300);
+				g.drawString("Press any key. Arrow keys for movement space for fire Player 1, Player 2 --> a,d for movement, w for firing",(800-g.getFontMetrics().stringWidth("Press any key. Arrow keys for movement space for fire Player 1, Player 2 --> a,d for movement, w for firing"))/2,300);
 				score_player1.setText("0");
 				scoreplayer1 = 0;
 				score_player2.setText("0");
@@ -603,7 +686,7 @@ public class Game extends Canvas {
 		      try {
 		    	  Clip clip = AudioSystem.getClip();
 		    	  AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("blast.wav"));
-		          //Main.class.getResourceAsStream("/path/to/sounds/" + url));
+		        
 		    	  clip.open(inputStream);
 		    	  clip.start(); 
 		      } 
@@ -625,7 +708,6 @@ public class Game extends Canvas {
 		      try {
 		    	  Clip clip = AudioSystem.getClip();
 		    	  AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("death.wav"));
-		          //Main.class.getResourceAsStream("/path/to/sounds/" + url));
 		    	  clip.open(inputStream);
 		    	  clip.start();
 		    	  while (!clip.isRunning())
@@ -652,7 +734,6 @@ public class Game extends Canvas {
 		      try {
 		    	  Clip clip = AudioSystem.getClip();
 		    	  AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("win.wav"));
-		          //Main.class.getResourceAsStream("/path/to/sounds/" + url));
 		    	  clip.open(inputStream);
 		    	  clip.start();
 		    	  while (!clip.isRunning())
@@ -670,15 +751,15 @@ public class Game extends Canvas {
 	} 
 	synchronized private static void createAndShowGUI() {
         //Create and set up the window.
-	//f.setLayout(new BorderLayout());
 	 container.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	//container.setSize(850,600);
 	container.setVisible(true);
 	container.setVisible(true);
 	container.setPreferredSize(new Dimension(850,600));
 	container.pack();
 	container.setResizable(false);
-    container.setContentPane(new Menu());
+	Menu temp = new Menu();
+	temp.playInit();
+    container.setContentPane(temp);
     }
 	
 	/**
@@ -689,7 +770,7 @@ public class Game extends Canvas {
 	 * @param argv The arguments that are passed into our game
 	 */
 	public static void main(String argv[]) {
-		Menu.playInit();
+	//	Menu.playInit();
 
 		Game g =new Game();
 
